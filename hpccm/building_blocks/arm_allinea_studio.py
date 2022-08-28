@@ -223,7 +223,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             tarball = posixpath.basename(self.__tarball)
 
             # Figure out the version from the tarball name
-            match = re.match(r'arm-compiler-for-linux_(?P<year>\d\d)\.0?(?P<month>[0-9][0-9]?)',
+            match = re.match(r'arm-compiler-for-linux_(?P<year>\d\d)\.0?(?P<month>[0-9][0-9]?\.?[0-9]?)',
                              tarball)
             if match and match.groupdict()['year'] and match.groupdict()['month']:
                 self.__version = '{0}.{1}'.format(match.groupdict()['year'],
@@ -326,10 +326,17 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                 }
                             }
         for microarch in self.__microarchitectures:
+            try:
+              string=microarch_string[self.__version][microarch]
+            except KeyError:
+                if(microarch!='generic'):
+                    raise RuntimeException(microarch + ' is not a valid microarchitecture for armpl version '+self.__version)
+                else:
+                    string='AArch64'
             armpl_arm_redist_path = posixpath.join(
                 self.__prefix,
-                'armpl-{0}.0_{1}_{2}_arm-linux-compiler_aarch64-linux'.format(
-                    self.__version, microarch_string[self.__version][microarch],
+                'armpl-{0}_{1}_{2}_arm-linux-compiler_aarch64-linux'.format(
+                    self.__version, string,
                     self.__directory_string),
                 'lib')
             paths.append(armpl_arm_redist_path)
@@ -340,8 +347,8 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                             dest=posixpath.join(armpl_arm_redist_path, ''))
             armpl_gcc_redist_path = posixpath.join(
                 self.__prefix,
-                'armpl-{0}.0_{1}_{2}_gcc_aarch64-linux'.format(
-                    self.__version, microarch_string[self.__version][microarch],
+                'armpl-{0}_{1}_{2}_gcc_aarch64-linux'.format(
+                    self.__version, string,
                     self.__directory_string),
                 'lib')
             paths.append(armpl_gcc_redist_path)
