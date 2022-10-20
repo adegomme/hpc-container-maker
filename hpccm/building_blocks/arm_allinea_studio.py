@@ -108,7 +108,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         super(arm_allinea_studio, self).__init__(**kwargs)
 
         self.__baseurl = kwargs.get('baseurl',
-                                    'https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio')
+                                    'https://developer.arm.com/-/media/Files/downloads/hpc')
         self.__commands = [] # Filled in by __setup()
         self.__directory_string = '' # Filled in by __distro()
 
@@ -238,14 +238,20 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
                 major_minor = '{0}-{1}'.format(match.groupdict()['major'],
                                                match.groupdict()['minor'])
-                url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, major_minor,
+                url = '{0}/arm-allinea-studio/{1}/{2}/{3}'.format(self.__baseurl, major_minor,
                                                self.__url_string, tarball)
-            else:
+            elif StrictVersion(self.__version) < StrictVersion('22.1'):
                 match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)', self.__version)
                 major_minor = '{0}-{1}-{2}'.format(match.groupdict()['major'],
                                                match.groupdict()['minor'],
                                                match.groupdict()['patch'])
-                url = '{0}/{1}/{2}'.format(self.__baseurl, major_minor, tarball)
+                url = '{0}/arm-allinea-studio/{1}/{2}'.format(self.__baseurl, major_minor, tarball)
+            else:
+                match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
+                major_minor = '{0}-{1}'.format(match.groupdict()['major'],
+                                               match.groupdict()['minor'])
+                url = '{0}/arm-compiler-for-linux/{1}/{2}'.format(self.__baseurl, major_minor,
+                                                                  tarball)
 
             # Download source from web
             self.__commands.append(self.download_step(url=url,
