@@ -336,8 +336,11 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                 },
                             '22.0': {
                                 'generic': 'AArch64'
+                                },
+                            '22.1': {
+                                'generic': 'AArch64'
                                 }
-                            }
+                           }
         for microarch in self.__microarchitectures:
             try:
               string=microarch_string[self.__version][microarch]
@@ -346,6 +349,8 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                     raise RuntimeException(microarch + ' is not a valid microarchitecture for armpl version '+self.__version)
                 else:
                     string='AArch64'
+            if self.__version == '22.1':
+              self.__version = '22.1.0'
             armpl_arm_redist_path = posixpath.join(
                 self.__prefix,
                 'armpl-{0}_{1}_{2}_arm-linux-compiler_aarch64-linux'.format(
