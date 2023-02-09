@@ -545,12 +545,12 @@ The default values are `make` and `wget`.
 - __source__: Boolean flag to specify whether to build CMake from
 source.  If True, includes the `libssl-dev` package in the list of
 OS packages for Ubuntu, and `openssl-devel` for RHEL-based
-distributions.  For x86_64 processors, the default is False, i.e.,
-use the available pre-compiled package.  For all other processors,
-the default is True.
+distributions.  For x86_64 and aarch64 processors, the default is
+False, i.e., use the available pre-compiled package.  For all
+other processors, the default is True.
 
 - __version__: The version of CMake to download.  The default value is
-`3.22.2`.
+`3.25.1`.
 
 __Examples__
 
@@ -3062,13 +3062,13 @@ local build context. The default value is empty.
 
 - __version__: the version of Nsight Compute to install.  Note when
 `runfile` is set this parameter is ignored.  The default value is
-`2022.1.1`.
+`2022.4.0`.
 
 __Examples__
 
 
 ```python
-nsight_compute(version='2020.2.1')
+nsight_compute(version='2020.4.0')
 ```
 
 ```python
@@ -3091,13 +3091,13 @@ __Parameters__
 package should be installed.  The default is True.
 
 - __version__: The version of Nsight Systems to install.  The default
-value is `2022.2.1`.
+value is `2022.5.1`.
 
 __Examples__
 
 
 ```python
-nsight_systems(version='2020.2.1')
+nsight_systems(version='2020.5.1')
 ```
 
 
@@ -3149,13 +3149,15 @@ SDK.  The default value is `False`.
 environment.  The default value is `True`.
 
 - __ospackages__: List of OS packages to install prior to installing the
-NVIDIA HPC SDK.  The default value is `ca-certificates`.  If not
-installing from the package repository, then for Ubuntu, the
-default values are `bc`, `debianutils`, `gcc`, `g++`, `gfortran`,
-`libatomic1`, `libnuma1`, `openssh-client`, and `wget`, and for
-RHEL-based Linux distributions, the default values are `bc`,
-`gcc`, `gcc-c++`, `gcc-gfortran`, `libatomic`, `numactl-libs`,
-`openssh-clients`, `wget`, and `which`.
+NVIDIA HPC SDK.  The default value is `ca-certificates`, `gnupg`,
+and `wget` for Ubuntu, and `ca-certificates` for RHEL-based Linux
+distributions.  If not installing from the package repository,
+then for Ubuntu, the default values are `bc`, `debianutils`,
+`gcc`, `g++`, `gfortran`, `libatomic1`, `libnuma1`,
+`openssh-client`, and `wget`, and for RHEL-based Linux
+distributions, the default values are `bc`, `gcc`, `gcc-c++`,
+`gcc-gfortran`, `libatomic`, `numactl-libs`, `openssh-clients`,
+`wget`, and `which`.
 
 - __package__: Path to the NVIDIA HPC SDK tar package file relative to
 the local build context.  The default value is empty.
@@ -3180,7 +3182,7 @@ the default GNU toolchain.
 
 - __version__: The version of the HPC SDK to use.  Note when `package`
 is set the version is determined automatically from the package
-file name.  The default value is `22.7`.
+file name.  The default value is `23.1`.
 
 __Examples__
 
@@ -3415,7 +3417,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of OpenBLAS source to download.  The default
-value is `0.3.10`.
+value is `0.3.21`.
 
 __Examples__
 
