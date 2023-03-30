@@ -176,9 +176,13 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__directory_string = 'Ubuntu-18.04'
                 self.__package_string = 'Ubuntu-18.04'
                 self.__url_string = "ACfL"
-            else:
+            elif hpccm.config.g_linux_version <= StrictVersion('22.1'):
                 self.__directory_string = 'Ubuntu-20.04'
                 self.__package_string = 'Ubuntu-20.04'
+                self.__url_string = "ACfL"
+            else:
+                self.__directory_string = 'Ubuntu-22.04'
+                self.__package_string = 'Ubuntu-22.04'
                 self.__url_string = "ACfL"
 
             self.__installer_template = 'arm-compiler-for-linux_{{}}_{0}.sh'.format(self.__directory_string)
@@ -309,11 +313,18 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         # linked; consider using '-static-arm-libs'.
 
         # OpenMP and Fortran runtime libraries
-        compiler_redist_path = posixpath.join(
-            self.__prefix,
-            'arm-linux-compiler-{0}_Generic-AArch64_{1}_aarch64-linux'.format(
+        if StrictVersion(self.__version) < StrictVersion('23.0'):
+            compiler_redist_path = posixpath.join(
+              self.__prefix,
+              'arm-linux-compiler-{0}_Generic-AArch64_{1}_aarch64-linux'.format(
+                 self.__version, self.__directory_string),
+              'lib')
+        else:
+            compiler_redist_path = posixpath.join(
+              self.__prefix,
+              'arm-linux-compiler-{0}_{1}'.format(
                 self.__version, self.__directory_string),
-            'lib')
+              'lib')
         paths.append(compiler_redist_path)
         self.rt += copy(_from=_from,
                         src=[posixpath.join(compiler_redist_path, lib)
@@ -349,12 +360,20 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                     raise RuntimeException(microarch + ' is not a valid microarchitecture for armpl version '+self.__version)
                 else:
                     string='AArch64'
-            if self.__version == '22.1':
-              self.__version = '22.1.0'
-            armpl_arm_redist_path = posixpath.join(
+            if  StrictVersion(self.__version) >= StrictVersion('22.1'):
+              self.__version += '.0'
+            if StrictVersion(self.__version) < StrictVersion('23.0'):
+              armpl_arm_redist_path = posixpath.join(
                 self.__prefix,
                 'armpl-{0}_{1}_{2}_arm-linux-compiler_aarch64-linux'.format(
                     self.__version, string,
+                    self.__directory_string),
+                'lib')
+            else:
+                armpl_arm_redist_path = posixpath.join(
+                self.__prefix,
+                'armpl-{0}_{1}_arm-linux-compiler'.format(
+                    self.__version,
                     self.__directory_string),
                 'lib')
             paths.append(armpl_arm_redist_path)
@@ -363,10 +382,18 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                  for lib in ['libamath.so',
                                              'libastring.so']],
                             dest=posixpath.join(armpl_arm_redist_path, ''))
-            armpl_gcc_redist_path = posixpath.join(
+            if StrictVersion(self.__version) < StrictVersion('23.0'):
+                armpl_gcc_redist_path = posixpath.join(
                 self.__prefix,
                 'armpl-{0}_{1}_{2}_gcc_aarch64-linux'.format(
                     self.__version, string,
+                    self.__directory_string),
+                'lib')
+            else:
+                armpl_gcc_redist_path = posixpath.join(
+                self.__prefix,
+                'armpl-{0}_{1}_gcc'.format(
+                    self.__version,
                     self.__directory_string),
                 'lib')
             paths.append(armpl_gcc_redist_path)
