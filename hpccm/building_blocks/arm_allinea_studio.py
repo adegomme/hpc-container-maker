@@ -360,7 +360,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                     raise RuntimeException(microarch + ' is not a valid microarchitecture for armpl version '+self.__version)
                 else:
                     string='AArch64'
-            if  StrictVersion(self.__version) >= StrictVersion('22.1'):
+            if  (self.__version.count('.') == 1:
               self.__version += '.0'
             if StrictVersion(self.__version) < StrictVersion('23.0'):
               armpl_arm_redist_path = posixpath.join(
