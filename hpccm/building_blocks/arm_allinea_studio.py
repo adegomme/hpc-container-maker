@@ -238,24 +238,18 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             # full version to get the individual components.
             tarball = 'arm-compiler-for-linux_{0}_{1}_aarch64.tar'.format(
                 self.__version, self.__package_string)
-            if StrictVersion(self.__version) <= StrictVersion('22.0'):
+            if self.__version.count('.') ==1:
                 match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
                 major_minor = '{0}-{1}'.format(match.groupdict()['major'],
                                                match.groupdict()['minor'])
                 url = '{0}/arm-allinea-studio/{1}/{2}/{3}'.format(self.__baseurl, major_minor,
                                                self.__url_string, tarball)
-            elif StrictVersion(self.__version) < StrictVersion('22.1'):
+            else:
                 match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)', self.__version)
                 major_minor = '{0}-{1}-{2}'.format(match.groupdict()['major'],
                                                match.groupdict()['minor'],
                                                match.groupdict()['patch'])
                 url = '{0}/arm-allinea-studio/{1}/{2}'.format(self.__baseurl, major_minor, tarball)
-            else:
-                match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
-                major_minor = '{0}-{1}'.format(match.groupdict()['major'],
-                                               match.groupdict()['minor'])
-                url = '{0}/arm-compiler-for-linux/{1}/{2}'.format(self.__baseurl, major_minor,
-                                                                  tarball)
 
             # Download source from web
             self.__commands.append(self.download_step(url=url,
