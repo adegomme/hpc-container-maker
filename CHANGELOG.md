@@ -1,3 +1,18 @@
+# v23.10.0
+- Refreshes default component versions for HPC-X (`hpcx`), LLVM (`llvm`),
+  Mellanox OFED (`mlnx_ofed`), NVIDIA HPC SDK (`nvhpc`), and NVSHMEM
+  (`nvshmem`) building blocks.
+- Modifies the NVSHMEM (`nvshmem`) building block to build with CMake.
+- Removes testing with Python 2.
+
+# v23.5.0
+- Add the ability to export the build environment to the generic
+  Autotools building block (`generic_autotools`).
+- Update the Anaconda (`conda`) package for the new upstream versioning
+  scheme, and refreshes the default component version.
+- Fix the Python building block (`python`) to use the correct name of the
+  Python 2 package on Ubuntu 22.04
+
 # v23.3.0
 - Refreshes default component version for the LLVM ('llvm') building block.
 

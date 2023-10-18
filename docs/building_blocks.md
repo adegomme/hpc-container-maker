@@ -598,10 +598,10 @@ Anaconda should be installed.  The default is False.
 
 - __python_subversion__: The Python version to install.  This value is
 ignored if the Conda version is less than 4.8.  The default is
-`py38` if using Python 3, and `py27` if using Python 2.
+`py310` if using Python 3, and `py27` if using Python 2.
 
 - __version__: The version of Anaconda to download.  The default value
-is `4.8.3`.
+is `23.1.0-1` if using Python 3, and `4.8.3` if using Python 2.
 
 __Examples__
 
@@ -1468,15 +1468,19 @@ Stage1 += h.runtime()
 hpcx(self, **kwargs)
 ```
 The `hpcx` building block downloads and installs the [Mellanox
-HPC-X](https://www.mellanox.com/page/products_dyn?product_family=189&mtag=hpc-x)
+HPC-X](https://developer.nvidia.com/networking/hpc-x)
 component.
 
 __Parameters__
 
 
 - __buildlabel__: The build label assigned by Mellanox to the tarball.
-This value is ignored for HPC-X version 2.10 and earlier.  The
-default value is `cuda11-gdrcopy2-nccl2.11`.
+For version 2.16 the default value is `cuda12-gdrcopy2-nccl2.18`.
+For version 2.15 the default value is `cuda12-gdrcopy2-nccl2.17`.
+For version 2.14 the default value is `cuda11-gdrcopy2-nccl2.16`.
+For versions 2.12 and 2.13 the default value is `cuda11-gdrcopy2-nccl2.12`.
+For versions 2.10 and 2.11 the default value is `cuda11-gdrcopy2-nccl2.11`.
+This value is ignored for HPC-X version 2.9 and earlier.
 
 - __environment__: Boolean flag to specify whether the environment
 should be modified to include HPC-X. This option is only
@@ -1508,19 +1512,24 @@ library directories. This value is ignored if `hpcxinit` is
 
 - __mlnx_ofed__: The version of Mellanox OFED that should be matched.
 This value is ignored if Inbox OFED is selected.  The default
-value is `5` for HPC-X version 2.11 and later, and `5.2-2.2.0.0`
+value is `5` for HPC-X version 2.10 and later, and `5.2-2.2.0.0`
 for earlier HPC-X versions.
 
 - __multi_thread__: Boolean flag to specify whether the multi-threaded
 version of Mellanox HPC-X should be used.  The default is `False`.
 
+- __ofedlabel__: The Mellanox OFED label assigned by Mellanox to the
+tarball.  For version 2.16 and later, the default value is
+`gcc-mlnx_ofed`.  For earlier versions, the default value is
+`gcc-MLNX_OFED_LINUX-5`.  This value is ignored if `inbox` is `True`.
+
 - __oslabel__: The Linux distribution label assigned by Mellanox to the
 tarball.  For Ubuntu, the default value is `ubuntu16.04` for
 Ubuntu 16.04, `ubuntu18.04` for Ubuntu 18.04, `ubuntu20.04` for
 Ubuntu 20.04, and `ubuntu22.04` for Ubuntu 22.04.  For HPC-X
-version 2.11 and later and RHEL-based Linux distributions, the
+version 2.10 and later and RHEL-based Linux distributions, the
 default value is `redhat7` for version 7 and `redhat8` for version
-8.  For HPC-X version 2.10 and earlier and RHEL-based Linux
+8.  For HPC-X version 2.9 and earlier and RHEL-based Linux
 distributions, the default value is `redhat7.6` for version 7 and
 `redhat8.0` for version 8.
 
@@ -1534,13 +1543,13 @@ distributions the default values are `bzip2`, `numactl-libs`,
 `/usr/local/hpcx`.
 
 - __version__: The version of Mellanox HPC-X to install.  The default
-value is `2.11`.
+value is `2.16`.
 
 __Examples__
 
 
 ```python
-hpcx(prefix='/usr/local/hpcx', version='2.6.0')
+hpcx(prefix='/usr/local/hpcx', version='2.16')
 ```
 
 
@@ -2431,7 +2440,7 @@ container entry point.  The default value is empty, i.e., install
 via the package manager to the standard system locations.
 
 - __version__: The version of Mellanox OFED to download.  The default
-value is `5.2-2.2.0.0`.
+value is `5.6-2.0.9.0`.
 
 __Examples__
 
@@ -3186,7 +3195,7 @@ the default GNU toolchain.
 
 - __version__: The version of the HPC SDK to use.  Note when `package`
 is set the version is determined automatically from the package
-file name.  The default value is `23.1`.
+file name.  The default value is `23.9`.
 
 __Examples__
 
@@ -3237,14 +3246,20 @@ Stage1 += n.runtime()
 nvshmem(self, **kwargs)
 ```
 The `nvshmem` building block builds and installs the
-[NVSHMEM](https://developer.nvidia.com/nvshmem) component.
+[NVSHMEM](https://developer.nvidia.com/nvshmem) component.  CMake
+version 3.19 or later is required and must be installed separately.
 
 __Parameters__
 
 
-- __binary_tarball__: Path to NVSHMEM binary tarball relative to the
-build context. The default value is empty. Either this parameter
-or `package` must be specified.
+- __build_examples__: Boolean flag to specify whether the NVSHMEM
+examples should be built.  The default is False.
+
+- __build_packages__: Boolean flag to specify whether the RPM and deb
+packages should be built.  The default is False.
+
+- __cmake_opts__: List of additional options to pass to `cmake`.  The
+default value is an empty list.
 
 - __cuda__: Flag to specify the path to the CUDA installation.  The
 default is `/usr/local/cuda`.
@@ -3256,27 +3271,16 @@ include NVSHMEM. The default is True.
 - __gdrcopy__: Flag to specify the path to the GDRCOPY installation.
 The default is empty.
 
-- __hydra__: Boolean flag to specify whether the Hydra process launcher
-should be installed.  If True, adds `automake` to the list of OS
-packages.  The default is False.
-
 - __ldconfig__: Boolean flag to specify whether the NVSHMEM library
 directory should be added dynamic linker cache.  If False, then
 `LD_LIBRARY_PATH` is modified to include the NVSHMEM library
 directory. The default value is False.
-
-- __make_variables__: Dictionary of environment variables and values to
-set when building NVSHMEM.  The default is an empty dictionary.
 
 - __mpi__: Flag to specify the path to the MPI installation.  The
 default is empty, i.e., do not build NVSHMEM with MPI support.
 
 - __ospackages__: List of OS packages to install prior to building.  The
 default values are `make` and `wget`.
-
-- __package__: Path to the NVSHMEM source package relative to the build
-context. The default value is empty. Either this parameter or
-`binary_tarball` must be specified.
 
 - __prefix__: The top level install location.  The default value is
 `/usr/local/nvshmem`.
@@ -3285,13 +3289,13 @@ context. The default value is empty. Either this parameter or
 default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
 - __version__: The version of NVSHMEM source to download.  The default
-value is `2.2.1`.
+value is `2.9.0-2`.
 
 __Examples__
 
 
 ```python
-nvshmem(mpi='/usr/local/openmpi', version='2.1.2')
+nvshmem(mpi='/usr/local/nvshmem', version='2.9.0-2')
 ```
 
 
