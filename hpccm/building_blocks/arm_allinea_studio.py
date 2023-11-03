@@ -246,8 +246,11 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
                 major_minor = '{0}-{1}'.format(match.groupdict()['major'],
                                                match.groupdict()['minor'])
-                url = '{0}/{1}/{2}/{3}/{4}'.format(self.__baseurl, stringpath, major_minor,
-                                               self.__url_string, tarball)
+                if StrictVersion(self.__version) < StrictVersion('23.10'):
+                  url = '{0}/{1}/{2}/{3}/{4}'.format(self.__baseurl, stringpath, major_minor,
+                                                self.__url_string, tarball)
+                else:
+                  url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, stringpath, major_minor, tarball)
             else:
                 match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)', self.__version)
                 major_minor = '{0}-{1}-{2}'.format(match.groupdict()['major'],
