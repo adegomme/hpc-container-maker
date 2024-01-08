@@ -172,11 +172,11 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__directory_string = 'Ubuntu-16.04'
                 self.__package_string = 'Ubuntu-16.04'
                 self.__url_string = 'Ubuntu16.04'
-            elif hpccm.config.g_linux_version <= Version('18.04'):
+            elif Version(hpccm.config.g_linux_version) <= Version('18.04'):
                 self.__directory_string = 'Ubuntu-18.04'
                 self.__package_string = 'Ubuntu-18.04'
                 self.__url_string = "ACfL"
-            elif hpccm.config.g_linux_version <= StrictVersion('22.1'):
+            elif Version(hpccm.config.g_linux_version) <= Version('22.1'):
                 self.__directory_string = 'Ubuntu-20.04'
                 self.__package_string = 'Ubuntu-20.04'
                 self.__url_string = "ACfL"
@@ -186,9 +186,9 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__url_string = "ACfL"
 
             self.__installer_template = 'arm-compiler-for-linux_{{}}_{0}.sh'.format(self.__directory_string)
-            if StrictVersion(self.__version) >= StrictVersion('23.0'):
+            if Version(hpccm.config.g_linux_version)  >= Version('23.0'):
                 python_package="python3"
-            elif  hpccm.config.g_linux_version >= StrictVersion('22.04'):
+            elif Version(hpccm.config.g_linux_version) >= Version('22.04'):
                 python_package = "python2"
             else:
                 python_package = "python"
@@ -197,7 +197,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                      'tcl', 'wget']
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-            if hpccm.config.g_linux_version >= Version('8.0'):
+            if Version(hpccm.config.g_linux_version) >= Version('8.0'):
                 self.__directory_string = 'RHEL-8'
                 self.__package_string = 'RHEL-8'
                 if Version(self.__version) <= Version('20.3'):
@@ -238,7 +238,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             # The download URL has the format MAJOR-MINOR in the path
             # and the tarball contains MAJOR.MINOR, so pull apart the
             # full version to get the individual components.
-            if StrictVersion(self.__version) < StrictVersion('22.1'):
+            if Version(self.__version) < Version('22.1'):
                 stringpath='arm-allinea-studio'
             else:
                 stringpath='arm-compiler-for-linux'
@@ -248,7 +248,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
                 major_minor = '{0}-{1}'.format(match.groupdict()['major'],
                                                match.groupdict()['minor'])
-                if StrictVersion(self.__version) < StrictVersion('23.10'):
+                if self.__version < '23.10':
                   url = '{0}/{1}/{2}/{3}/{4}'.format(self.__baseurl, stringpath, major_minor,
                                                 self.__url_string, tarball)
                 else:
@@ -316,7 +316,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         # linked; consider using '-static-arm-libs'.
 
         # OpenMP and Fortran runtime libraries
-        if StrictVersion(self.__version) < StrictVersion('23.0'):
+        if Version(self.__version) < Version('23.0'):
             compiler_redist_path = posixpath.join(
               self.__prefix,
               'arm-linux-compiler-{0}_Generic-AArch64_{1}_aarch64-linux'.format(
@@ -365,7 +365,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                     string='AArch64'
             if  self.__version.count('.') == 1:
               self.__version += '.0'
-            if StrictVersion(self.__version) < StrictVersion('23.0'):
+            if Version(self.__version) < Version('23.0'):
               armpl_arm_redist_path = posixpath.join(
                 self.__prefix,
                 'armpl-{0}_{1}_{2}_arm-linux-compiler_aarch64-linux'.format(
@@ -385,7 +385,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                  for lib in ['libamath.so',
                                              'libastring.so']],
                             dest=posixpath.join(armpl_arm_redist_path, ''))
-            if StrictVersion(self.__version) < StrictVersion('23.0'):
+            if Version(self.__version) < Version('23.0'):
                 armpl_gcc_redist_path = posixpath.join(
                 self.__prefix,
                 'armpl-{0}_{1}_{2}_gcc_aarch64-linux'.format(
