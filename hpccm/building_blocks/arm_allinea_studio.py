@@ -182,12 +182,14 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__url_string = "ACfL"
 
             self.__installer_template = 'arm-compiler-for-linux_{{}}_{0}.sh'.format(self.__directory_string)
-            if  hpccm.config.g_linux_version >= Version('22.04'):
-                python2_package = "python2"
+            if StrictVersion(self.__version) >= StrictVersion('23.0'):
+                python_package="python3"
+            elif  hpccm.config.g_linux_version >= StrictVersion('22.04'):
+                python_package = "python2"
             else:
-                python2_package = "python"
+                python_package = "python"
             if not self.__ospackages:
-                self.__ospackages = ['libc6-dev', 'lmod', python2_package, 'tar',
+                self.__ospackages = ['libc6-dev', 'lmod', python_package, 'tar',
                                      'tcl', 'wget']
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
@@ -237,8 +239,21 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                            match.groupdict()['minor'])
             tarball = 'arm-compiler-for-linux_{0}_{1}_aarch64.tar'.format(
                 self.__version, self.__package_string)
-            url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, major_minor,
-                                           self.__url_string, tarball)
+            if self.__version.count('.') ==1:
+                match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
+                major_minor = '{0}-{1}'.format(match.groupdict()['major'],
+                                               match.groupdict()['minor'])
+                if StrictVersion(self.__version) < StrictVersion('23.10'):
+                  url = '{0}/{1}/{2}/{3}/{4}'.format(self.__baseurl, stringpath, major_minor,
+                                               self.__url_string, tarball)
+                else:
+                  url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, stringpath, major_minor, tarball)
+            else:
+                match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)', self.__version)
+                major_minor = '{0}-{1}-{2}'.format(match.groupdict()['major'],
+                                               match.groupdict()['minor'],
+                                               match.groupdict()['patch'])
+                url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, stringpath, major_minor, tarball)
 
             # Download source from web
             self.__commands.append(self.download_step(url=url,
