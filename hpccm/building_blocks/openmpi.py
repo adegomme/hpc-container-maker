@@ -195,6 +195,7 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__default_repository = 'https://github.com/open-mpi/ompi.git'
         self.__infiniband = kwargs.pop('infiniband', True)
         self.__ospackages = kwargs.pop('ospackages', [])
+        self.__preconfigure = kwargs.pop('preconfigure', [])
         self.__pmi = kwargs.pop('pmi', False)
         self.__pmix = kwargs.pop('pmix', False)
         self.__prefix = kwargs.pop('prefix', '/usr/local/openmpi')
@@ -235,7 +236,7 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             comment=False,
             configure_opts=self.__configure_opts,
             devel_environment=self.environment_variables,
-            preconfigure=['./autogen.pl'] if self.repository else None,
+            preconfigure=self.__preconfigure+['./autogen.pl'] if self.repository else self.__preconfigure,
             prefix=self.__prefix,
             recursive=self.__recursive,
             runtime_environment=self.environment_variables,
