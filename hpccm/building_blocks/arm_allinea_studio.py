@@ -172,11 +172,11 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__directory_string = 'Ubuntu-16.04'
                 self.__package_string = 'Ubuntu-16.04'
                 self.__url_string = 'Ubuntu16.04'
-            elif Version(hpccm.config.g_linux_version) <= Version('18.04'):
+            elif hpccm.config.g_linux_version <= Version('18.04'):
                 self.__directory_string = 'Ubuntu-18.04'
                 self.__package_string = 'Ubuntu-18.04'
                 self.__url_string = "ACfL"
-            elif Version(hpccm.config.g_linux_version) <= Version('22.1'):
+            elif hpccm.config.g_linux_version <= Version('22.1'):
                 self.__directory_string = 'Ubuntu-20.04'
                 self.__package_string = 'Ubuntu-20.04'
                 self.__url_string = "ACfL"
@@ -186,9 +186,9 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__url_string = "ACfL"
 
             self.__installer_template = 'arm-compiler-for-linux_{{}}_{0}.sh'.format(self.__directory_string)
-            if Version(hpccm.config.g_linux_version)  >= Version('23.0'):
-                python_package="python3"
-            elif Version(hpccm.config.g_linux_version) >= Version('22.04'):
+            if hpccm.config.g_linux_version  >= Version('23.0'):
+                python_package = "python3"
+            elif hpccm.config.g_linux_version >= Version('22.04'):
                 python_package = "python2"
             else:
                 python_package = "python"
@@ -197,7 +197,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                      'tcl', 'wget']
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-            if Version(hpccm.config.g_linux_version) >= Version('8.0'):
+            if hpccm.config.g_linux_version >= Version('8.0'):
                 self.__directory_string = 'RHEL-8'
                 self.__package_string = 'RHEL-8'
                 if Version(self.__version) <= Version('20.3'):
