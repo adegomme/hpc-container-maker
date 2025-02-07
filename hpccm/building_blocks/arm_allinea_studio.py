@@ -106,9 +106,6 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         """Initialize building block"""
 
         super(arm_allinea_studio, self).__init__(**kwargs)
-
-        self.__baseurl = kwargs.get('baseurl',
-                                    'https://developer.arm.com/-/media/Files/downloads/hpc')
         self.__commands = [] # Filled in by __setup()
         self.__directory_string = '' # Filled in by __distro()
 
@@ -126,7 +123,13 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__tarball = kwargs.get('tarball', None)
         self.__version = kwargs.get('version', '22.0')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
-
+        if Version(self.__version) < Version('24.10'):
+          self.__baseurl = kwargs.get('baseurl',
+                                    'https://developer.arm.com/-/media/Files/downloads/hpc')
+        else:
+          self.__baseurl = kwargs.get('baseurl',
+                                    'https://developer.arm.com/-/cdn-downloads/permalink/')
+ 
         self.toolchain = toolchain(CC='armclang', CXX='armclang++',
                                    F77='armflang', F90='armflang',
                                    FC='armflang')
@@ -240,11 +243,16 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             # full version to get the individual components.
             if Version(self.__version) < Version('22.1'):
                 stringpath='arm-allinea-studio'
-            else:
+            elif Version(self.__version) < Version('24.10'):
                 stringpath='arm-compiler-for-linux'
+            else:
+                stringpath='Arm-Compiler-for-Linux'
             tarball = 'arm-compiler-for-linux_{0}_{1}_aarch64.tar'.format(
                 self.__version, self.__package_string)
-            if self.__version.count('.') ==1:
+            if Version(self.__version) >= Version('24.10'):
+                major_minor='Version_'+self.__version
+                url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, stringpath, major_minor, tarball)
+            elif self.__version.count('.') ==1:
                 match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
                 major_minor = '{0}-{1}'.format(match.groupdict()['major'],
                                                match.groupdict()['minor'])
